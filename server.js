@@ -25,9 +25,7 @@ app.post("/users/auth", (req, res) => {
   userService
   .auth(req.body.username, req.body.password)
   .then(user => {
-    if (user == null){
-      res.json('Le nom d\'utilisateur ou le mot de passe est incorrect');
-    } else {
+    if (user != null){
       var token = jwt.sign(user, app.get('tokenSecret'), {
         expiresIn : 1440
       });
@@ -44,7 +42,7 @@ app.post("/users/signUp", (req, res) => {
   .then(user =>{
     if (user == null){
       userService.signUp(req.body.username, req.body.password);
-      res.json('Votre compte a bien été créé');
+      res.status(200).send();
     } else {
       res.json('Le nom d\'utilisateur existe déjà');
     }

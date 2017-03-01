@@ -9,8 +9,10 @@ module.exports = (db) => {
     });
   }
 
+  // TODO tester l'insert balance.
+  // Insert a new user and give him 1500 coins for his signUp.
   function signUp(username, password){
-    users.insert({username,password});
+    users.insert({username,password,Balance:1500});
   }
 
   function deleteAccount(username){
@@ -31,7 +33,7 @@ module.exports = (db) => {
 
   function getAmount(idUser){
     return users.findOne({_id:ObjectID(idUser)}, {Balance:1,_id:0}).then(function(amount){
-      return (amount.Balance);
+        return amount.Balance;
     });
   }
 

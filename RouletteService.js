@@ -1,9 +1,12 @@
 module.exports = () => {
+
+  const randomNumber = require("random-number-csprng");
+
   const RATIO_0 = 7;
   const RATIO = 2;
+  const lastNumber = 14;
+  const firstNumber = 0;
 
-  var ObjectID = require('mongodb').ObjectID;
-  let UserService = require ('./UserService');
 
   function getAmountFromBet(stake, number, hasWon){
     if (hasWon){
@@ -14,8 +17,15 @@ module.exports = () => {
     }
   }
 
+  function generateNumber(){
+      return randomNumber(firstNumber,lastNumber).then(function(number){
+         return number;
+      });
+  }
+
   return {
-    getAmountFromBet
+    getAmountFromBet,
+    generateNumber
   };
 
 }

@@ -27,7 +27,7 @@ app.post("/users/auth", (req, res) => {
   .then(user => {
     if (user != null){
       var token = jwt.sign(user, app.get('tokenSecret'), {
-        expiresIn : 1440
+        expiresIn : 1440000
       });
       res.json(token);
     }
@@ -49,6 +49,12 @@ app.post("/users/signUp", (req, res) => {
   })
 });
 
+
+app.get("/roulette/getResult", (req, res) => {
+  rouletteService.generateNumber().then(function(number){
+    return res.json(number);
+  });
+});
 
 // route middleware to check the token
 apiRoutes.use(function(req, res, next) {
@@ -124,7 +130,7 @@ MongoClient
   .connect(config.database)
   .then(db => {
     userService = require('./UserService')(db);
-    rouletteService = require('./rouletteService');
+    rouletteService = require('./RouletteService')();
     app.listen(8887, () => console.log("Server listening port 8887..."));
     console.log('Connected');
   })

@@ -14,8 +14,10 @@
     "jsonwebtoken": "^7.2.1",
     "mongodb": "^2.2.16",
     "morgan": "^1.7.0",
+    "random-number-csprng": "^1.0.2",
     "react": "15.4.1",
-    "react-native": "^0.39.2"
+    "react-native": "^0.39.2",
+    "secure-random": "^1.1.1"
   },
   "devDependencies": {
     "babel-jest": "17.0.2",

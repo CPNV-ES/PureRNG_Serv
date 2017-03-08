@@ -9,7 +9,6 @@ module.exports = (db) => {
     });
   }
 
-  // TODO tester l'insert balance.
   // Insert a new user and give him 1500 coins for his signUp.
   function signUp(username, password){
     users.insert({username,password,Balance:1500});

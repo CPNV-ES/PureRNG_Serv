@@ -21,6 +21,12 @@ var apiRoutes = express.Router();
 
 // Routes that are not secured by token
 
+
+app.post("/test", (req,res) => {
+  roomService.createNewRoom('roulette');
+  res.json('');
+});
+
 app.post("/users/auth", (req, res) => {
   userService
   .auth(req.body.username, req.body.password)
@@ -130,6 +136,7 @@ MongoClient
   .connect(config.database)
   .then(db => {
     userService = require('./UserService')(db);
+    roomService = require('./RoomService')(db);
     rouletteService = require('./RouletteService')();
     app.listen(8887, () => console.log("Server listening port 8887..."));
     console.log('Connected');

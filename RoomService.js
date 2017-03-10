@@ -3,7 +3,6 @@ module.exports = (db) => {
   var ObjectID = require('mongodb').ObjectID;
   const rooms = db.collection('Room');
 
-
     /**
      * Return all rooms
      */
@@ -16,7 +15,7 @@ module.exports = (db) => {
      * @param idUser
      * @param idRoom
      */
-  function join(idUser, idRoom){
+  function join(idRoom, idUser){
       rooms.findOne({_id : ObjectID(idUser)}, {users:1,_id:0}).then(function(users){
          if (users.split(",").length < 10){
              if (users.length != 0){
@@ -56,15 +55,36 @@ module.exports = (db) => {
       rooms.update({_id:ObjectID(idRoom)},{$set:{'users':users}});
   }
 
-  // TODO : Check the higher room number ; insert with this number +1
-  function createNewRoom(){
-    rooms.insert()
 
+    /**
+     * Create a new room in a given game and assign it to a room number
+     * @param game
+     */
+  function createNewRoom(game){
+     getMaxRoom(game).then(function(number){
+         number+=1;
+         rooms.insert({game, number, users:''});
+     });
   }
 
-  // TODO : Get if there are 2 rooms empty or more  and delete all except one
-  function deleteEmpty(idRoom){
+    /**
+     * Get the higher room on a given game
+     * @param game
+     * @returns {Promise.<TResult>|*}
+     */
+  function getMaxRoom(game){
+      var options = { "sort": [['number','desc']] };
+      return rooms.findOne({game}, options).then(function(room) {
+          return room.number;
+      });
+  }
 
+    /**
+     * Delete a given room
+     * @param idRoom
+     */
+  function deleteRoom(idRoom){
+    rooms.remove({_id:ObjectID(idRoom)});
   }
 
 
@@ -74,7 +94,7 @@ module.exports = (db) => {
     join,
     quit,
     createNewRoom,
-    deleteEmpty
+    deleteRoom
   };
 
 }

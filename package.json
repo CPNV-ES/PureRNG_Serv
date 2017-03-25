@@ -12,12 +12,15 @@
     "express": "^4.14.0",
     "formidable": "^1.0.17",
     "jsonwebtoken": "^7.2.1",
+    "jwt-decode": "^2.1.0",
     "mongodb": "^2.2.16",
     "morgan": "^1.7.0",
+    "nodejs-websocket": "^1.7.1",
     "random-number-csprng": "^1.0.2",
     "react": "15.4.1",
     "react-native": "^0.39.2",
-    "secure-random": "^1.1.1"
+    "secure-random": "^1.1.1",
+    "socket.io": "^1.7.3"
   },
   "devDependencies": {
     "babel-jest": "17.0.2",

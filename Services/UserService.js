@@ -4,7 +4,7 @@ module.exports = (db) => {
   const users = db.collection('User');
 
   function auth(username, password){
-    return users.findOne({username,password}, {_id:0,username:1}).then(function(user){
+    return users.findOne({username,password}, {_id:1,username:1}).then(function(user){
       return user;
     });
   }
@@ -31,8 +31,8 @@ module.exports = (db) => {
   }
 
   function getAmount(idUser){
-    return users.findOne({_id:ObjectID(idUser)}, {Balance:1,_id:0}).then(function(amount){
-        return amount.Balance;
+    return users.findOne({_id:ObjectID(idUser)}, {Balance:1,_id:0}).then(function(user){
+        return user.Balance;
     });
   }
 

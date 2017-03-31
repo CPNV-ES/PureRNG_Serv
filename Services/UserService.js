@@ -1,7 +1,6 @@
-module.exports = (db) => {
+module.exports = (users) => {
 
   var ObjectID = require('mongodb').ObjectID;
-  const users = db.collection('User');
 
   function auth(username, password){
     return users.findOne({username,password}, {_id:1,username:1}).then(function(user){

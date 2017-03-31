@@ -1,7 +1,6 @@
-module.exports = (db) => {
+module.exports = (rooms) => {
 
   var ObjectID = require('mongodb').ObjectID;
-  const rooms = db.collection('Room');
 
     /**
      * Return all rooms
@@ -18,6 +17,7 @@ module.exports = (db) => {
      * @param username
      */
   function join(idRoom, username){
+      console.log('fesse');
       rooms.findOne({_id : ObjectID(idRoom)}, {users:1,_id:0}).then(function(users){
          var usersList = users.users;
          if (!usersList.includes(username) && usersList.split(",").length < 10){

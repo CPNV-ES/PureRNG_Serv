@@ -8,8 +8,9 @@ const jwtDecode = require('jwt-decode');
 const config = require('./config');
 
 let userService;
-let rouletteService;
 let roomService;
+let rouletteService;
+let socketManager;
 
 const app = express();
 // const io = require('socket.io')(app);
@@ -25,10 +26,10 @@ var apiRoutes = express.Router();
 
 // Routes that are not secured by token
 
-app.get("/test", (req,res) => {
-  roomService.deleteRoom('58c8f0e4a8e054d1bb30d66c');
-  res.json('');
-});
+// app.get("/test", (req,res) => {
+//   roomService.deleteRoom('58c8f0e4a8e054d1bb30d66c');
+//   res.json('');
+// });
 
 
 app.post("/auth", (req, res) => {
@@ -69,13 +70,12 @@ app.get("/rooms", (req, res) => {
     });
 });
 
-
-app.get("/roulette/getResult", (req, res) => {
-  rouletteService.generateNumber().then(function(number){
-    roomService
-    res.json(number);
-  });
-});
+// app.get("/roulette/getResult", (req, res) => {
+//   rouletteService.generateNumber().then(function(number){
+//     roomService
+//     res.json(number);
+//   });
+// });
 
 
 // route middleware to check the token
@@ -104,18 +104,6 @@ apiRoutes.use(function(req, res, next) {
 
 // Routes that are secured by token
 app.use(apiRoutes);
-
-app.post("/rooms/join", (req, res) => {
-    var token = jwtDecode(req.headers['x-access-token']);
-    roomService.join(req.body.idRoom, token.username);
-    res.json('');
-});
-
-app.post("/rooms/quit", (req, res) => {
-    var token = jwtDecode(req.headers['x-access-token']);
-    roomService.quit(req.body.idRoom, token.username);
-    res.json('');
-});
 
 app.post("/users/deleteAccount", (req, res) => {
   userService
@@ -148,8 +136,8 @@ app.put("/users/setAmount", (req, res) => {
 
 
 app.post("/users/getAmount", (req, res) => {
-  return userService.getAmount(req.body.idUser).then(function(amount){
-    return amount;
+  return userService.getAmount(jwtDecode(req.headers['x-access-token'])._id).then(function(amount){
+    res.json(amount);
   });
 });
 
@@ -164,9 +152,10 @@ app.post("/roulette/bet", (req, res) => {
 MongoClient
   .connect(config.database)
   .then(db => {
-    userService = require('./Services/UserService')(db);
-    roomService = require('./Services/RoomService')(db);
+    userService = require('./Services/UserService')(db.collection('User'));
+    roomService = require('./Services/RoomService')(db.collection('Room'));
     rouletteService = require('./Services/RouletteService')();
+    socketManager = require('./SocketsManager')(app, db);
     roomService.createFirstRoom('roulette');
     console.log('Connected');
     app.listen(8887, () => console.log("Server listening port 8887..."));

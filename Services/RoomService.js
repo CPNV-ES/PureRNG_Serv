@@ -1,6 +1,16 @@
-module.exports = (rooms) => {
+/**
+ * Manage the rooms in the MongoDB
+ * @param app
+ * @param rooms
+ * @param userService
+ * @param rouletteService
+ * @returns {{getRooms: getRooms, join: join, quit: quit, createNewRoom: createNewRoom, createFirstRoom: createFirstRoom, deleteRoom: deleteRoom, updateLastNumbers: updateLastNumbers}}
+ */
+module.exports = (app, rooms, userService, rouletteService) => {
 
   var ObjectID = require('mongodb').ObjectID;
+  const Room = require('../Modals/Room');
+  const SocketManager = require('../SocketsManager');
 
     /**
      * Return all rooms
@@ -17,7 +27,6 @@ module.exports = (rooms) => {
      * @param username
      */
   function join(idRoom, username){
-      console.log('fesse');
       rooms.findOne({_id : ObjectID(idRoom)}, {users:1,_id:0}).then(function(users){
          var usersList = users.users;
          if (!usersList.includes(username) && usersList.split(",").length < 10){
@@ -60,23 +69,34 @@ module.exports = (rooms) => {
 
 
     /**
+     *
      * Create a new room in a given game and assign it to a room number
+     * Return a new socket instance
      * @param game
+     * @returns {Room}
      */
   function createNewRoom(game){
       rooms.count().then(function(count){
           if (count!=0) {
               getMaxRoom(game).then(function (number) {
-                  rooms.insert({game, number: number + 1, users: ''});
+                  rooms.insert({game, number: number + 1, users: ''}).then((room) => {
+                      new Room(room, SocketManager(app), this, userService, rouletteService);
+                  });
               });
           }
       });
   }
 
+    /**
+     * Create the first room on the server start
+     * @param game
+     */
   function createFirstRoom(game){
-      rooms.count().then(function(count){
+      rooms.count().then((count) => {
         if (count == 0){
-           rooms.insert({game, number:1, users:''});
+           rooms.insert({game, number:1, users:''}).then((room) => {
+               new Room(room.ops[0], SocketManager(app), this, userService, rouletteService);
+           });
         }
       });
   }

@@ -30,13 +30,15 @@ module.exports = (users) => {
   }
 
   function getAmount(idUser){
-    return users.findOne({_id:ObjectID(idUser)}, {Balance:1,_id:0}).then(function(user){
+    return users.findOne({_id:ObjectID(idUser)}, {Balance:1,_id:0}).then((user) => {
         return user.Balance;
     });
   }
 
   function setAmount(idUser, amount){
-    users.update({_id:ObjectID(idUser)},{$inc: { Balance : amount}});
+    return users.update({_id:ObjectID(idUser)},{$inc: { Balance : amount}}).then(() => {
+      return getAmount(idUser);
+    });
   }
 
   return {
